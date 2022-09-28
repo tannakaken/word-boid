@@ -1,4 +1,4 @@
-import { Sphere } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import React, { useRef } from "react";
 import { Mesh } from "three";
@@ -19,9 +19,19 @@ const BoidPresenter = ({ scale, boid }: Props) => {
     }
   });
   return (
-    <Sphere ref={ref} scale={[scale, scale, scale]}>
-      <meshStandardMaterial color={"pink"} />
-    </Sphere>
+    <Text
+      font="./NotoSansJP-Regular.otf"
+      anchorX={"center"}
+      anchorY={"middle"}
+      fontSize={1}
+      strokeColor={"black"}
+      strokeWidth={0.01}
+      ref={ref}
+      scale={[scale, scale, scale]}
+      color={"black"}
+    >
+      {boid.text}
+    </Text>
   );
 };
 

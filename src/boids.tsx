@@ -10,18 +10,42 @@ const randomNum = (num: number) => {
   return Math.random() * num * 2 - num;
 };
 
-const CHANGE_PREY_TIME = 10;
-const PREY_RANGE = 5;
-const BOID_NUM = 50;
+const CHANGE_PREY_TIME = 20;
+const PREY_RANGE = 2;
+
+const texts = [
+  "私は",
+  "ここにいる",
+  "群れの中",
+  "孤独",
+  "そこは",
+  "どこ",
+  "あなたは",
+  "誰",
+  "?",
+  "空を飛ぶ",
+  "夢を見た",
+  "いつ",
+  "きっと",
+  "雲みたい",
+  "天を覆い",
+  "真っ黒に",
+  "みんな",
+  "いつか",
+  "一緒に",
+  "遠い",
+  "ところ",
+];
 
 const makeBoids = () => {
   const boids: Boid[] = [];
-  for (let i = 0; i < BOID_NUM; i++) {
+  texts.forEach((text) => {
     boids.push({
       position: new Vector3(randomNum(3), randomNum(3), randomNum(3)),
       speed: new Vector3(randomNum(1), randomNum(1), randomNum(1)),
+      text,
     });
-  }
+  });
   return boids;
 };
 

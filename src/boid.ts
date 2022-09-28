@@ -3,11 +3,12 @@ import { Vector3 } from "three"
 export type Boid = {
     position: Vector3;
     speed: Vector3;
+    text: string;
 }
 
-const COHESION_FORCE = 0.08;
-const SEPARATION_FORCE = 0.8;
-const ALIGNMENT_FORCE = 0.06;
+const COHESION_FORCE = 0.1;
+const SEPARATION_FORCE = 0.4;
+const ALIGNMENT_FORCE = 0.1;
 
 const COHESION_DISTANCE = 4;
 const SEPARATION_DISTANCE = 0.8;
@@ -17,8 +18,8 @@ const COHESIION_ANGLE = Math.PI / 2;
 const SEPARATION_ANGLE = Math.PI / 2;
 const ALIGNMENT_ANGLE = Math.PI / 3;
 
-const MIN_VEL = 0.1;
-const MAX_VEL = 0.6;
+const MIN_VEL = 0.3;
+const MAX_VEL = 0.9;
 
 const BOUNDARY_FORCE = 0.001;
 const BOUNDARY_DISTANCE = 1;
