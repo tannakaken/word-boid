@@ -4,9 +4,19 @@ import React, { useRef } from "react";
 import { Mesh } from "three";
 import { Boid } from "./boid";
 
+/**
+ * テキストを表示させるBoid
+ */
+export type WordBoid = Boid & {
+  /**
+   * 表示させるテキスト
+   */
+  text: string;
+};
+
 type Props = {
   scale: number;
-  boid: Boid;
+  boid: WordBoid;
 };
 
 const BoidPresenter = ({ scale, boid }: Props) => {

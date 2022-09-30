@@ -3,8 +3,8 @@ import { Mesh, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import { Sphere } from "@react-three/drei";
 import "./App.css";
-import { Boid, updateBoids } from "./boid";
-import BoidPresenter from "./boid-presenter";
+import { updateBoids } from "./boid";
+import BoidPresenter, { WordBoid } from "./boid-presenter";
 
 const randomNum = (num: number) => {
   return Math.random() * num * 2 - num;
@@ -38,7 +38,7 @@ const texts = [
 ];
 
 const makeBoids = () => {
-  const boids: Boid[] = [];
+  const boids: WordBoid[] = [];
   texts.forEach((text) => {
     boids.push({
       position: new Vector3(randomNum(3), randomNum(3), randomNum(3)),
