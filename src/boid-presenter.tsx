@@ -17,9 +17,10 @@ export type WordBoid = Boid & {
 type Props = {
   scale: number;
   boid: WordBoid;
+  color: string;
 };
 
-const BoidPresenter = ({ scale, boid }: Props) => {
+const BoidPresenter = ({ scale, boid, color }: Props) => {
   const ref = useRef<Mesh>(null);
   useFrame(() => {
     if (ref.current) {
@@ -34,11 +35,11 @@ const BoidPresenter = ({ scale, boid }: Props) => {
       anchorX={"center"}
       anchorY={"middle"}
       fontSize={1}
-      strokeColor={"black"}
+      strokeColor={color}
       strokeWidth={0.01}
       ref={ref}
       scale={[scale, scale, scale]}
-      color={"black"}
+      color={color}
     >
       {boid.text}
     </Text>

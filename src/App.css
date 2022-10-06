@@ -25,3 +25,45 @@
   background-color: lightgrey;
   color: grey;
 }
+
+.info {
+  font-size: small;
+}
+
+.info h2 {
+  font-size: large;
+}
+
+.info p {
+  line-height: 1.2em;
+  margin-bottom: 0.5px;
+}
+
+.btn,
+a.btn,
+button.btn {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  position: relative;
+  display: inline-block;
+  padding: 1rem;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  border-radius: 0.5rem;
+}
+
+
+.btn:hover,
+a.btn:hover {
+  background: #aaaaaa;
+}
