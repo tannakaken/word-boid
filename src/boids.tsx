@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { Suspense, useCallback, useMemo, useRef } from "react";
 import { Mesh, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import { Sphere } from "@react-three/drei";
@@ -47,12 +47,15 @@ const makeWordBoids = (poem: string): WordBoid[] => {
 
 type Props = {
   poem: string;
-  color: string;
+  /**
+   * リレンダリング防止にオブジェクトを渡す。
+   */
+  colorData: { color: string };
   debug?: boolean;
 };
 
-const Boids = ({ poem, color, debug = false }: Props) => {
-  const wordBoids = makeWordBoids(poem);
+const Boids = ({ poem, colorData, debug = false }: Props) => {
+  const wordBoids = useMemo(() => makeWordBoids(poem), [poem]);
   const ref = useRef<Mesh>(null);
   const prey = useMemo(() => new Vector3(0, 0, 0), []);
   const counter = useMemo(() => ({ count: 0 }), []);
@@ -86,13 +89,13 @@ const Boids = ({ poem, color, debug = false }: Props) => {
     updateBoids(wordBoids, prey, delta);
   });
   return (
-    <>
+    <Suspense fallback={null}>
       {wordBoids.map((boid, index) => (
         <BoidPresenter
           scale={0.1}
           boid={boid}
           key={`boid-${index}`}
-          color={color}
+          colorData={colorData}
         />
       ))}
       {debug && (
@@ -100,7 +103,7 @@ const Boids = ({ poem, color, debug = false }: Props) => {
           <meshStandardMaterial color={"green"} />
         </Sphere>
       )}
-    </>
+    </Suspense>
   );
 };
 

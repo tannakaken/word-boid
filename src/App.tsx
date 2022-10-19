@@ -7,12 +7,11 @@ import React, {
   useState,
 } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { button, Leva, useControls } from "leva";
 import "./App.css";
 import Boids, { initialPoem } from "./boids";
 import ReactModal from "react-modal";
+import Loading from "./Loading";
 
 ReactModal.setAppElement("#root");
 
@@ -60,104 +59,36 @@ function App() {
       await videoRef.current.play();
     } else {
       videoRef.current.pause();
-      const mediaStream = videoRef.current.srcObject as MediaStream;
-      mediaStream.getTracks().forEach((track) => {
-        track.stop();
-      });
+      const mediaStream = videoRef.current.srcObject as MediaStream | null;
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
       videoRef.current.srcObject = null;
       videoRef.current.load();
     }
   }, [videoOn]);
-  const handleHorizontalOrientation = useCallback(
-    (
-      event: DeviceOrientationEvent,
-      orbitControls: OrbitControlsImpl,
-      orientation: Orientation
-    ) => {
-      if (event.alpha && event.gamma) {
-        // 正確に一回転にならない
-        const diffAlpha = ((event.alpha - orientation.alpha) / 90) * Math.PI;
-        const diffGamma = ((event.gamma - orientation.gamma) / 90) * Math.PI;
-        orbitControls.setAzimuthalAngle(
-          orbitControls.getAzimuthalAngle() + diffAlpha + diffGamma
-        );
-        orientation.alpha = event.alpha;
-        orientation.gamma = event.gamma;
-      }
-    },
-    []
-  );
-  const orbitControlRef = useRef<OrbitControlsImpl>(null);
-  const handleVerticalOrientation = useCallback(
-    (
-      event: DeviceOrientationEvent,
-      orbitControls: OrbitControlsImpl,
-      orientation: Orientation
-    ) => {
-      if (event.beta) {
-        const newPolarAngle = (event.beta / 180) * Math.PI;
-        orbitControls.setPolarAngle(newPolarAngle);
-
-        orientation.beta = event.beta;
-      }
-    },
-    []
-  );
-  const orientation = useMemo(() => ({ alpha: 0, beta: 0, gamma: 0 }), []);
-  const handleOrientation = useCallback(
-    (event: DeviceOrientationEvent) => {
-      if (orbitControlRef.current === null) {
-        return;
-      }
-      handleHorizontalOrientation(event, orbitControlRef.current, orientation);
-      handleVerticalOrientation(event, orbitControlRef.current, orientation);
-      orbitControlRef.current.update();
-    },
-    [handleHorizontalOrientation, handleVerticalOrientation, orientation]
-  );
+  const colorData = useMemo(() => ({ color: "#000000" }), []);
+  useEffect(() => {
+    colorData.color = color;
+  }, [color, colorData]);
 
   useEffect(() => {
     toggleCamera();
   }, [toggleCamera]);
   return (
     <div className="App">
-      <Suspense fallback={<p>loading...</p>}>
+      <Suspense fallback={<Loading />}>
         <Canvas>
-          <OrbitControls ref={orbitControlRef} />
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
-          <Boids poem={poem} color={color} />
+          <Boids poem={poem} colorData={colorData} />
         </Canvas>
         <video className="video" ref={videoRef} playsInline />
         <button
           className="video-button"
           onClick={() => {
-            // if (videoOn) {
-            //   window.removeEventListener(
-            //     "deviceorientation",
-            //     handleOrientation
-            //   );
-            // } else {
-            //   if (
-            //     // @ts-ignore
-            //     typeof DeviceOrientationEvent["requestPermission"] ===
-            //     "function"
-            //   ) {
-            //     // @ts-ignore
-            //     DeviceOrientationEvent["requestPermission"]()
-            //       .then((permissionStatus: string) => {
-            //         if (permissionStatus === "granted") {
-            //           window.addEventListener(
-            //             "deviceorientation",
-            //             handleOrientation
-            //           );
-            //         }
-            //       })
-            //       .catch((error: any) => console.error(error));
-            //   } else {
-            //     window.addEventListener("deviceorientation", handleOrientation);
-            //   }
-            // }
             setVideoOn(!videoOn);
           }}
         >
@@ -177,6 +108,7 @@ function App() {
       >
         <div className="info">
           <h2>詩の編集</h2>
+          <p>改行ごとに別の言羽となって飛び交います。</p>
           <textarea
             value={edited}
             onChange={(event) => {
