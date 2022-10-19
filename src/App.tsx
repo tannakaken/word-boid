@@ -132,37 +132,38 @@ function App() {
         <button
           className="video-button"
           onClick={() => {
-            if (videoOn) {
-              window.removeEventListener(
-                "deviceorientation",
-                handleOrientation
-              );
-            } else {
-              if (
-                // @ts-ignore
-                typeof DeviceOrientationEvent["requestPermission"] ===
-                "function"
-              ) {
-                // @ts-ignore
-                DeviceOrientationEvent["requestPermission"]()
-                  .then((permissionStatus: string) => {
-                    if (permissionStatus === "granted") {
-                      window.addEventListener(
-                        "deviceorientation",
-                        handleOrientation
-                      );
-                    }
-                  })
-                  .catch((error: any) => console.error(error));
-              } else {
-                window.addEventListener("deviceorientation", handleOrientation);
-              }
-            }
+            // if (videoOn) {
+            //   window.removeEventListener(
+            //     "deviceorientation",
+            //     handleOrientation
+            //   );
+            // } else {
+            //   if (
+            //     // @ts-ignore
+            //     typeof DeviceOrientationEvent["requestPermission"] ===
+            //     "function"
+            //   ) {
+            //     // @ts-ignore
+            //     DeviceOrientationEvent["requestPermission"]()
+            //       .then((permissionStatus: string) => {
+            //         if (permissionStatus === "granted") {
+            //           window.addEventListener(
+            //             "deviceorientation",
+            //             handleOrientation
+            //           );
+            //         }
+            //       })
+            //       .catch((error: any) => console.error(error));
+            //   } else {
+            //     window.addEventListener("deviceorientation", handleOrientation);
+            //   }
+            // }
             setVideoOn(!videoOn);
           }}
         >
           {videoOn ? "カメラ停止" : "カメラ起動"}
         </button>
+        <Leva hidden={isInfoOpen || isEditorOpen} />
       </Suspense>
       <ReactModal
         isOpen={isEditorOpen}
@@ -274,7 +275,6 @@ function App() {
           </button>
         </div>
       </ReactModal>
-      <Leva hidden={isInfoOpen || isEditorOpen} />
     </div>
   );
 }
