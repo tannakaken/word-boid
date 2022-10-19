@@ -11,7 +11,7 @@ import { button, Leva, useControls } from "leva";
 import "./App.css";
 import Boids, { initialPoem } from "./boids";
 import ReactModal from "react-modal";
-import Loading from "./Loading";
+import Title from "./TItle";
 
 ReactModal.setAppElement("#root");
 
@@ -22,6 +22,12 @@ export type Orientation = {
 };
 
 function App() {
+  const [showTitle, setShowTitle] = useState(true);
+  useEffect(() => {
+    setTimeout(() => {
+      setShowTitle(false);
+    }, 3000);
+  }, []);
   const [poem, setPoem] = useState(initialPoem);
   const [edited, setEdited] = useState(initialPoem);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -77,9 +83,16 @@ function App() {
   useEffect(() => {
     toggleCamera();
   }, [toggleCamera]);
+  if (showTitle) {
+    return (
+      <>
+        <Title /> <Leva hidden={true} />
+      </>
+    );
+  }
   return (
     <div className="App">
-      <Suspense fallback={<Loading />}>
+      <Suspense fallback={null}>
         <Canvas>
           <ambientLight />
           <pointLight position={[10, 10, 10]} />

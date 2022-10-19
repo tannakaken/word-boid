@@ -1,9 +1,9 @@
 import React from "react";
 
 /**
- * テクスチャをロード中に表示されるテキスト
+ * 最初に表示される
  */
-const Loading = () => {
+const Title = () => {
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <p
@@ -20,4 +20,4 @@ const Loading = () => {
   );
 };
 
-export default Loading;
+export default Title;
