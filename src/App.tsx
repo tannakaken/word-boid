@@ -2,17 +2,25 @@ import React, {
   Suspense,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { button, Leva, useControls } from "leva";
 import "./App.css";
 import Boids, { initialPoem } from "./boids";
 import ReactModal from "react-modal";
 
 ReactModal.setAppElement("#root");
+
+export type Orientation = {
+  alpha: number;
+  beta: number;
+  gamma: number;
+};
 
 function App() {
   const [poem, setPoem] = useState(initialPoem);
@@ -60,6 +68,53 @@ function App() {
       videoRef.current.load();
     }
   }, [videoOn]);
+  const handleHorizontalOrientation = useCallback(
+    (
+      event: DeviceOrientationEvent,
+      orbitControls: OrbitControlsImpl,
+      orientation: Orientation
+    ) => {
+      if (event.alpha && event.gamma) {
+        // 正確に一回転にならない
+        const diffAlpha = ((event.alpha - orientation.alpha) / 90) * Math.PI;
+        const diffGamma = ((event.gamma - orientation.gamma) / 90) * Math.PI;
+        orbitControls.setAzimuthalAngle(
+          orbitControls.getAzimuthalAngle() + diffAlpha + diffGamma
+        );
+        orientation.alpha = event.alpha;
+        orientation.gamma = event.gamma;
+      }
+    },
+    []
+  );
+  const orbitControlRef = useRef<OrbitControlsImpl>(null);
+  const handleVerticalOrientation = useCallback(
+    (
+      event: DeviceOrientationEvent,
+      orbitControls: OrbitControlsImpl,
+      orientation: Orientation
+    ) => {
+      if (event.beta) {
+        const newPolarAngle = (event.beta / 180) * Math.PI;
+        orbitControls.setPolarAngle(newPolarAngle);
+
+        orientation.beta = event.beta;
+      }
+    },
+    []
+  );
+  const orientation = useMemo(() => ({ alpha: 0, beta: 0, gamma: 0 }), []);
+  const handleOrientation = useCallback(
+    (event: DeviceOrientationEvent) => {
+      if (orbitControlRef.current === null) {
+        return;
+      }
+      handleHorizontalOrientation(event, orbitControlRef.current, orientation);
+      handleVerticalOrientation(event, orbitControlRef.current, orientation);
+      orbitControlRef.current.update();
+    },
+    [handleHorizontalOrientation, handleVerticalOrientation, orientation]
+  );
 
   useEffect(() => {
     toggleCamera();
@@ -68,13 +123,44 @@ function App() {
     <div className="App">
       <Suspense fallback={<p>loading...</p>}>
         <Canvas>
-          <OrbitControls />
+          <OrbitControls ref={orbitControlRef} />
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
           <Boids poem={poem} color={color} />
         </Canvas>
         <video className="video" ref={videoRef} playsInline />
-        <button className="video-button" onClick={() => setVideoOn(!videoOn)}>
+        <button
+          className="video-button"
+          onClick={() => {
+            if (videoOn) {
+              window.removeEventListener(
+                "deviceorientation",
+                handleOrientation
+              );
+            } else {
+              if (
+                // @ts-ignore
+                typeof DeviceOrientationEvent["requestPermission"] ===
+                "function"
+              ) {
+                // @ts-ignore
+                DeviceOrientationEvent["requestPermission"]()
+                  .then((permissionStatus: string) => {
+                    if (permissionStatus === "granted") {
+                      window.addEventListener(
+                        "deviceorientation",
+                        handleOrientation
+                      );
+                    }
+                  })
+                  .catch((error: any) => console.error(error));
+              } else {
+                window.addEventListener("deviceorientation", handleOrientation);
+              }
+            }
+            setVideoOn(!videoOn);
+          }}
+        >
           {videoOn ? "カメラ停止" : "カメラ起動"}
         </button>
       </Suspense>
@@ -133,7 +219,7 @@ function App() {
         }}
       >
         <div className="info">
-          <h2>言葉のボイド</h2>
+          <h2>言羽のボイド</h2>
           <p>ホメロスの時代から言葉は「翼を持つ」と喩えられてきました。</p>
           <p>そこで実際にBoidsというアルゴリズムで言葉を飛ばしてみました。</p>
           <p>
