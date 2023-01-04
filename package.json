@@ -1,7 +1,19 @@
 {
   "name": "word-boid",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Words flying around by boids-algorithm.",
+  "author": "Tannakian Cat <tannakaken@gmail.com> (https://github.com/tannakaken/)",
+  "license": "CC-BY-SA-4.0",
+   "repository": {
+    "type": "git",
+    "url": "https://github.com/tannakaken/word-boid.git"
+  },
+  "keywords": [
+    "boid",
+    "AR",
+    "react",
+    "three.js"
+  ],
   "dependencies": {
     "@react-three/drei": "^9.32.3",
     "@react-three/fiber": "^8.8.4",
